@@ -1,6 +1,5 @@
 import processing.core.PApplet;
 import processing.core.PImage;
-import processing.video.*;
 import SimpleOpenNI.*;
 
 /**
@@ -10,17 +9,14 @@ public class ColoredObjectKinectTracker extends PApplet {
 
     // camera object
     SimpleOpenNI cam;
-    // WEBCAM VERSION
-    // Capture cam;
 
     PImage kinectFrame;
+    PImage depthFrame;
 
     // color to track
     int trackColor;
 
     public void setup() {
-
-        size(640, 480);
 
         // init camera, 15 fps
         cam = new SimpleOpenNI(this);
@@ -32,9 +28,7 @@ public class ColoredObjectKinectTracker extends PApplet {
         cam.enableRGB();
         cam.enableDepth();
 
-        // WEBCAM VERSION
-        // cam = new Capture(this, width, height, 15);
-        // cam.start();
+        size(cam.rgbWidth(), cam.rgbHeight());
 
 
         // init tracking red
@@ -45,13 +39,18 @@ public class ColoredObjectKinectTracker extends PApplet {
     }
 
     public void draw() {
-//        WEBCAM VERSION
-//        if(cam.available()) {
-//            cam.read();
-//        }
-//        cam.loadPixels();
 
+        // update camera and get color pixels
+        cam.update();
         kinectFrame = cam.rgbImage();
+        kinectFrame.loadPixels();
+
+        // get depthImage and copy to size of rgbImage
+        depthFrame = cam.depthImage();
+        depthFrame.copy(depthFrame, 0, 0, kinectFrame.width, kinectFrame.height, 0, 0, kinectFrame.width, kinectFrame.height);
+        depthFrame.loadPixels();
+
+        // show camera frame
         image(kinectFrame, 0, 0);
 
         // difference in color to check for, big to automatically get first pixel
@@ -86,13 +85,16 @@ public class ColoredObjectKinectTracker extends PApplet {
             }
         }
 
+        // get depth information for the given pixels
+        int z = depthFrame.pixels[closestX + closestY*kinectFrame.width];
+
         // draw circle if color is close enough
         if (minDiff < 10) {
             fill(trackColor);
             strokeWeight(4.0f);
             stroke(0);
             ellipse(closestX, closestY, 16, 16);
-            System.out.println(closestX + "," + closestY);
+            System.out.println(closestX + "," + closestY + "," + z);
         }
 
     }
