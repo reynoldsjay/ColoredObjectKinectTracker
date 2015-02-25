@@ -1,6 +1,8 @@
 import processing.core.PApplet;
 import processing.core.PImage;
 import SimpleOpenNI.*;
+import oscP5.*;
+import netP5.*;
 
 /**
  * Processing sketch to track a colored object in 3D with Kinect
@@ -9,6 +11,10 @@ public class ColoredObjectKinectTracker extends PApplet {
 
     // camera object
     SimpleOpenNI cam;
+
+    // for udp
+    OscP5 osc;
+    NetAddress destination;
 
     PImage kinectFrame;
     PImage depthFrame;
@@ -29,6 +35,11 @@ public class ColoredObjectKinectTracker extends PApplet {
         cam.enableDepth();
 
         size(cam.rgbWidth(), cam.rgbHeight());
+
+
+        // open port to send coordinates
+        osc = new OscP5(this, 12345);
+        destination = new NetAddress("127.0.0.1", 12345);
 
 
         // init tracking red
@@ -98,6 +109,12 @@ public class ColoredObjectKinectTracker extends PApplet {
             stroke(0);
             ellipse(closestX, closestY, 16, 16);
             System.out.println(closestX + "," + closestY + "," + z);
+
+            // send the coordinates to port 12345
+            OscMessage sendMessage = new OscMessage(closestX);
+            sendMessage.add(closestY);
+            sendMessage.add(z);
+            osc.send(sendMessage, destination);
         }
 
     }
