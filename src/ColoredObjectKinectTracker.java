@@ -17,7 +17,6 @@ public class ColoredObjectKinectTracker extends PApplet {
     NetAddress destination;
 
     PImage kinectFrame;
-    PImage depthFrame;
 
     // color to track
     int trackColor;
@@ -32,7 +31,6 @@ public class ColoredObjectKinectTracker extends PApplet {
             return;
         }
         cam.enableRGB();
-        cam.enableDepth();
 
         size(cam.rgbWidth(), cam.rgbHeight());
 
@@ -55,14 +53,6 @@ public class ColoredObjectKinectTracker extends PApplet {
         cam.update();
         kinectFrame = cam.rgbImage();
         kinectFrame.loadPixels();
-
-        // get depthImage and copy to size of rgbImage
-        depthFrame = cam.depthImage();
-        depthFrame.copy(depthFrame, 0, 0, depthFrame.width, depthFrame.height, 0, 0, kinectFrame.width, kinectFrame.height);
-        depthFrame.loadPixels();
-
-        // test depthframe
-        // image(kinectFrame);
 
         // show camera frame
         image(kinectFrame, 0, 0);
@@ -99,21 +89,17 @@ public class ColoredObjectKinectTracker extends PApplet {
             }
         }
 
-        // get depth information for the given pixels as a color
-        int z = depthFrame.pixels[closestX + closestY*kinectFrame.width];
-
         // draw circle if color is close enough
         if (minDiff < 10) {
             fill(trackColor);
             strokeWeight(4.0f);
             stroke(0);
             ellipse(closestX, closestY, 16, 16);
-            System.out.println(closestX + "," + closestY + "," + z);
+            System.out.println(closestX + "," + closestY);
 
             // send the coordinates to port 12345
             OscMessage sendMessage = new OscMessage(closestX);
             sendMessage.add(closestY);
-            sendMessage.add(z);
             osc.send(sendMessage, destination);
         }
 
