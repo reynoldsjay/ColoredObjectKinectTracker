@@ -12,5 +12,7 @@
     <orderEntry type="library" name="video" level="application" />
     <orderEntry type="library" name="gstreamer-java" level="application" />
     <orderEntry type="library" name="jna" level="application" />
+    <orderEntry type="library" name="oscP5" level="application" />
+    <orderEntry type="library" name="udp" level="application" />
   </component>
 </module>

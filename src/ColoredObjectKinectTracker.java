@@ -47,8 +47,11 @@ public class ColoredObjectKinectTracker extends PApplet {
 
         // get depthImage and copy to size of rgbImage
         depthFrame = cam.depthImage();
-        depthFrame.copy(depthFrame, 0, 0, kinectFrame.width, kinectFrame.height, 0, 0, kinectFrame.width, kinectFrame.height);
+        depthFrame.copy(depthFrame, 0, 0, depthFrame.width, depthFrame.height, 0, 0, kinectFrame.width, kinectFrame.height);
         depthFrame.loadPixels();
+
+        // test depthframe
+        // image(kinectFrame);
 
         // show camera frame
         image(kinectFrame, 0, 0);
@@ -85,7 +88,7 @@ public class ColoredObjectKinectTracker extends PApplet {
             }
         }
 
-        // get depth information for the given pixels
+        // get depth information for the given pixels as a color
         int z = depthFrame.pixels[closestX + closestY*kinectFrame.width];
 
         // draw circle if color is close enough
