@@ -55,7 +55,7 @@ public class ColoredObjectKinectTracker extends PApplet {
                 float b2 = blue(trackColor);
 
                 // check how different pixel color is from color tracked
-                float d = dist(r1,g1,b1,r2,g2,b2);
+                float d = dist(r1, g1, b1, r2, g2, b2);
 
                 // update closest color pixel
                 if (d < minDiff) {
@@ -71,7 +71,7 @@ public class ColoredObjectKinectTracker extends PApplet {
             fill(trackColor);
             strokeWeight(4.0f);
             stroke(0);
-            ellipse(closestX,closestY,16,16);
+            ellipse(closestX, closestY, 16, 16);
             System.out.println(closestX + "," + closestY);
         }
 
